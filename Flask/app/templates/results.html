@@ -1,0 +1,140 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <title>Similarity Search</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/mdb.min.css" rel="stylesheet">
+    <link href="/static/css/style.css" rel="stylesheet">
+
+    <script src='/static/smilesDrawer/dist/smiles-drawer.min.js'></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+        crossorigin="anonymous"></script>
+
+    <style>
+        .no-border {
+            border: 0;
+            box-shadow: none;
+        }
+
+        .containerpadding {
+            padding: 50px 50px 50px 50px;
+        }
+
+        .headerpadding {
+            padding: 30px 30px 30px 30px;
+        }
+
+        .padding {
+            padding: 5px 5px 5px 5px
+        }
+
+        .displayResults {
+            display: inline-block;
+            width: 560px;
+            height: 600px;
+            border: 2px;
+            border-style: double;
+            border-color: rgb(215, 235, 251);
+        }
+        .displayResults-query {
+            display: inline-block;
+            width: 560px;
+            height: 600px;
+            border: 2px;
+            border-style: double;
+            border-color: rgb(196, 233, 199);
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <div>
+        <div>
+            <h1 class="primary-color-dark font-awesome lighten-2 text-white headerpadding">
+                <b>{{hits}} nearest neighbours from {{db}} using MXFP</b>
+            </h1>
+            <div>&nbsp;</div>
+            <div class="containerpadding">
+                <div class="displayResults-query text-center">
+                    <h4 class="success-color-dark font-awesome lighten-2 text-white padding"><b>Query</b></h4>
+                    <a class="card-link" style="visibility: hidden">see it in PubChem</a>
+                    <h6 class="font-awesome text-primary-color-dark padding" style="visibility: hidden">CBD from query </h6>
+                    <canvas id="structure" data-smiles={{query}}></canvas>
+                </div>
+                {% for result in results %}
+                <div class="displayResults text-center">
+                    <h4 class="primary-color-dark font-awesome lighten-2 text-white padding"><b>{{ID}}{{result[0][0]}}</b></h4>
+                    <a href="{{url}}{{result[0][0]}}" target="_blank" class="card-link">see it in {{db}}</a>
+                    <h6 class="font-awesome text-primary-color-dark padding">CBD from query {{result[1]}}</h6>
+                    <canvas id="structure" data-smiles={{result[0][1]}}></canvas>
+                </div>
+                {% endfor %}
+                <div>&nbsp;</div>
+                <div>&nbsp;</div>
+                <textarea id="my-textarea" style="display:none;" class="form-control">{% for result in results %}{{result[0][1]}} {{result[0][0]}} {{result[1]}}&#013;&#010;{% endfor %}</textarea>
+                <a class="btn btn-primary" id="b">download</a>
+            </div>
+        </div>
+
+        <div>
+            <footer class="page-footer font-small primary-color-dark pt-4" id="footer">
+                <div class="container">
+                    <ul class="list-unstyled list-inline text-center">
+                        <li class="list-inline-item">
+                            <a class="btn-floating btn-fb mx-1" target="_blank" href="https://www.facebook.com/gdb.unibe/">
+                                <i class="fa fa-facebook"> </i>
+                            </a>
+                        </li>
+                        <li class="list-inline-item">
+                            <a class="btn-floating btn-tw mx-1" target="_blank" href="https://twitter.com/intent/follow?original_referer=http%3A%2F%2Fwww.gdb.unibe.ch%2F&ref_src=twsrc%5Etfw&screen_name=reymondgroup&tw_p=followbutton">
+                                <i class="fa fa-twitter"> </i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="footer-copyright text-center py-3">© 2018
+                    <a target="_blank" href="http://www.gdb.unibe.ch/"> Reymond Group</a>
+                </div>
+            </footer>
+        </div>
+
+
+        <script>
+            $(function () {
+                SmilesDrawer.apply();
+                let canvas = document.getElementById('structure');
+            });
+
+            function download() {
+                var text = document.getElementById("my-textarea").value;
+                var blob = new Blob([text], { type: "text/plain" });
+                var anchor = document.createElement("a");
+                anchor.download = "NNs.smi";
+                anchor.href = window.URL.createObjectURL(blob);
+                anchor.target = "_blank";
+                anchor.style.display = "none";
+                document.body.appendChild(anchor);
+                anchor.click();
+                document.body.removeChild(anchor);
+            }
+            var button = document.getElementById('b');
+            button.addEventListener('click', download);
+
+        </script>
+        
+        <script type="text/javascript" src="/static/js/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="/static/js/popper.min.js"></script>
+        <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/static/js/mdb.min.js"></script>
+</body>
+
+</html>
